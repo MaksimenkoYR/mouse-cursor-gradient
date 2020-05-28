@@ -1,32 +1,41 @@
 let foo = document.getElementById('foo')
-
-foo.addEventListener('mousemove', e => {
-    const fooRect = foo.getBoundingClientRect()
-
-    const centerX = fooRect.left + fooRect.width / 2
-    const centerY = fooRect.top + fooRect.height / 2
-    let baseVectorX = 0
-    const baseVectorY = 107 - centerY
-
-    const curentVectorX = e.clientX - centerX
-    const curentVectorY = e.clientY - centerY
-    const vectorScalar = baseVectorX * curentVectorX + baseVectorY * curentVectorY
-
-    const vectorModule =
-        Math.sqrt(baseVectorX * baseVectorX + baseVectorY * baseVectorY) *
-        Math.sqrt(curentVectorX * curentVectorX + curentVectorY * curentVectorY)
-    let Deg = Math.acos(vectorScalar / vectorModule) * (180 / Math.PI)
-
-    if (e.clientX < centerX) {
-        console.log(Deg)
-        Deg = 360 - Deg
+const findAngle = (element, event) => {
+    const elementRect = element.getBoundingClientRect()
+    const centerX = elementRect.left + elementRect.width / 2
+    const centerY = elementRect.top + elementRect.height / 2
+    const baseVector = {x: 0, y: -1}
+    const currentVector = {
+        x: event.clientX - centerX,
+        y: event.clientY - centerY
     }
-    console.log(Deg)
+    const vectorScalar = baseVector.y * currentVector.y
 
-    foo.style.cssText = `
-    background: rgb(62,194,243);
-background: linear-gradient(${Deg}deg, rgba(62,194,243,1) 0%, rgba(201,40,233,1) 100%);
-    background-size: 1200px 900px ;
-    background-position: center;
-    `
+    const baseVectorModule = Math.sqrt(baseVector.y * baseVector.y)
+    const currentVectorModule =
+        Math.sqrt(currentVector.x * currentVector.x + currentVector.y * currentVector.y)
+
+    const vectorsModulesMultiplication = baseVectorModule * currentVectorModule
+
+    const Deg = Math.acos(vectorScalar / vectorsModulesMultiplication) * (180 / Math.PI)
+    let Angle = Deg
+    let x = true
+    
+    console.log(Angle)
+
+    if (event.clientX < centerX) {
+        Angle = 360 - Deg
+    } 
+    return(Angle)
+}
+const setGradient = (element, event) => {
+    Angle = findAngle(element, event)
+
+    element.style.cssText = `background-image: linear-gradient(${Angle}deg, rgba(62,194,243,1) 0%, rgba(201,40,233,1) 100%);`
+
+}
+
+foo.addEventListener("mousemove", e => {
+    setGradient(foo, e)
 })
+
+
